@@ -1,24 +1,20 @@
-jest.mock('openai', () =>
-  jest.fn().mockImplementation(() => ({
-    responses: {
-      create: jest.fn().mockResolvedValue({
-        output: [
-          {
-            content: [
-              {
-                text: JSON.stringify({
-                  flashcards: [
-                    { prompt: 'What is the main ingredient?', answer: 'Eggs' },
-                  ],
-                }),
-              },
-            ],
-          },
-        ],
+jest.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
+    getGenerativeModel: jest.fn().mockReturnValue({
+      generateContent: jest.fn().mockResolvedValue({
+        response: {
+          text: jest.fn().mockReturnValue(
+            JSON.stringify({
+              flashcards: [
+                { prompt: 'What is the main ingredient?', answer: 'Eggs' },
+              ],
+            })
+          ),
+        },
       }),
-    },
-  }))
-);
+    }),
+  })),
+}));
 
 const request = require('supertest');
 const app = require('../app');
@@ -68,5 +64,8 @@ describe('Flashcard Routes', () => {
     expect(fetchRes.body.cards[0].prompt).toContain('main ingredient');
   });
 });
+
+
+
 
 

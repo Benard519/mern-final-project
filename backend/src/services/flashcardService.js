@@ -1,20 +1,20 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-let client;
+let genAI;
 
 const getClient = () => {
-  if (!client) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not configured');
+  if (!genAI) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
     }
-    client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
-  return client;
+  return genAI;
 };
 
 const buildPrompt = (recipe) => `
 You are an assistant that creates study flashcards to help someone memorize a recipe.
-Return JSON formatted as {"flashcards":[{"prompt":"","answer":""},...]}.
+Return ONLY valid JSON formatted as {"flashcards":[{"prompt":"","answer":""},...]}.
 Create 4-6 concise flashcards using ingredients, instructions, and tips.
 Recipe Title: ${recipe.title}
 Ingredients: ${recipe.ingredients.join(', ')}
@@ -23,14 +23,22 @@ Category: ${recipe.category}; Difficulty: ${recipe.difficulty}; Prep Time: ${rec
 `;
 
 exports.generateFlashcardsFromRecipe = async (recipe) => {
-  const response = await getClient().responses.create({
-    model: 'gpt-4o-mini',
-    input: buildPrompt(recipe),
-    response_format: { type: 'json_object' },
-  });
+  const model = getClient().getGenerativeModel({ model: 'gemini-1.5-flash' });
+  
+  const prompt = buildPrompt(recipe);
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
 
-  const output = response.output?.[0]?.content?.[0]?.text || '{}';
-  const parsed = JSON.parse(output);
+  // Extract JSON from response (handle markdown code blocks if present)
+  let jsonText = text.trim();
+  if (jsonText.startsWith('```json')) {
+    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  } else if (jsonText.startsWith('```')) {
+    jsonText = jsonText.replace(/```\n?/g, '').trim();
+  }
+
+  const parsed = JSON.parse(jsonText);
   if (!Array.isArray(parsed.flashcards)) {
     throw new Error('Invalid flashcard response from AI');
   }

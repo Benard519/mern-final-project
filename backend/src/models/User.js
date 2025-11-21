@@ -25,3 +25,6 @@ userSchema.methods.matchPassword = function matchPassword(enteredPassword) {
 module.exports = mongoose.model('User', userSchema);
 
 
+
+
+

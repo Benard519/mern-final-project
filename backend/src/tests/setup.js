@@ -5,7 +5,7 @@ let mongo;
 
 beforeAll(async () => {
   process.env.JWT_SECRET = process.env.JWT_SECRET || 'testsecret';
-  process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'test-key';
+  process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'test-key';
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
   await mongoose.connect(uri);

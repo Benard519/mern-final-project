@@ -29,3 +29,6 @@ recipeSchema.index({ title: 'text', ingredients: 'text', category: 'text' });
 module.exports = mongoose.model('Recipe', recipeSchema);
 
 
+
+
+
