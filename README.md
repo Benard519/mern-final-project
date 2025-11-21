@@ -90,4 +90,8 @@ docs/      # Architecture, deployment, API, demo script
 - Capture UI screenshots and recording for submission.
 - Configure environment secrets in hosting providers.
 - Monitor logs + metrics once deployed.
+```
 
+## deployment URLs
+- BACKEND: https://mern-final-project-u7u0.onrender.com
+- FRONTEND: https://mern-final-project-wk8.netlify.app/
