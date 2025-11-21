@@ -27,6 +27,7 @@ jobs:
         env:
           MONGO_URI: mongodb://127.0.0.1:27017/test
           JWT_SECRET: secret
+          GEMINI_API_KEY: test-key
         run: npm test
 
       - name: Install frontend deps
