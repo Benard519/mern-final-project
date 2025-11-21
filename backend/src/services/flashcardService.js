@@ -23,7 +23,9 @@ Category: ${recipe.category}; Difficulty: ${recipe.difficulty}; Prep Time: ${rec
 `;
 
 exports.generateFlashcardsFromRecipe = async (recipe) => {
-  const model = getClient().getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = getClient().getGenerativeModel({
+    model: 'gemini-1.5-flash-latest',
+  });
   
   const prompt = buildPrompt(recipe);
   const result = await model.generateContent(prompt);
