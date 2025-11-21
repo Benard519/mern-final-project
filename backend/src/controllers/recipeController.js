@@ -31,8 +31,15 @@ exports.getRecipes = asyncHandler(async (req, res) => {
   if (difficulty) query.difficulty = difficulty;
   if (maxPrepTime) query.prepTime = { $lte: Number(maxPrepTime) };
   if (authorId) query.user = authorId;
+  
+  // Use regex search as fallback if text index isn't available
   if (search) {
-    query.$text = { $search: search };
+    const searchRegex = new RegExp(search, 'i');
+    query.$or = [
+      { title: searchRegex },
+      { category: searchRegex },
+      { ingredients: { $in: [searchRegex] } },
+    ];
   }
 
   const skip = (Number(page) - 1) * Number(limit);

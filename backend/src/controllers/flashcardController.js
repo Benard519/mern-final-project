@@ -17,11 +17,20 @@ exports.generateFlashcards = asyncHandler(async (req, res) => {
   }
 
   const cards = await generateFlashcardsFromRecipe(recipe);
-  const flashcardDoc = await Flashcard.create({
-    recipe: recipeId,
-    createdBy: req.user._id,
-    cards,
-  });
+  
+  // Update existing flashcard or create new one
+  const flashcardDoc = await Flashcard.findOneAndUpdate(
+    { recipe: recipeId },
+    {
+      recipe: recipeId,
+      createdBy: req.user._id,
+      cards,
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
 
   res.status(201).json(flashcardDoc);
 });

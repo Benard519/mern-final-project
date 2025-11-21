@@ -10,9 +10,22 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 app.use(morgan('dev'));
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'https://mern-final-project-wk8.netlify.app',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
