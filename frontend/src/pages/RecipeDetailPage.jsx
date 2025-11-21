@@ -22,6 +22,7 @@ const RecipeDetailPage = () => {
   const toggleLike = useToggleLike();
   const { addComment, deleteComment } = useCommentMutations();
   const [comment, setComment] = useState('');
+  const [flashcardError, setFlashcardError] = useState(null);
 
   if (isLoading) {
     return <LoadingSpinner label="Fetching recipe..." />;
@@ -46,7 +47,13 @@ const RecipeDetailPage = () => {
   };
 
   const handleGenerate = async () => {
-    await generateFlashcards.mutateAsync(id);
+    setFlashcardError(null);
+    try {
+      await generateFlashcards.mutateAsync(id);
+    } catch (error) {
+      setFlashcardError(error.response?.data?.message || 'Failed to generate flashcards. Please try again.');
+      console.error('Flashcard generation error:', error);
+    }
   };
 
   const isOwner = user?.id === recipe.user?._id;
@@ -119,10 +126,19 @@ const RecipeDetailPage = () => {
             </Link>
           </div>
           <div className="mt-6">
+            {flashcardError && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {flashcardError}
+              </div>
+            )}
             {flashcardsLoading ? (
               <LoadingSpinner label="Loading flashcards..." />
+            ) : flashcards && flashcards.cards && flashcards.cards.length > 0 ? (
+              <FlashcardDeck cards={flashcards.cards} />
             ) : (
-              <FlashcardDeck cards={flashcards?.cards} />
+              <p className="text-sm text-slate-500">
+                No flashcards yet. Click "Generate / refresh" to create study cards from this recipe.
+              </p>
             )}
           </div>
         </div>

@@ -40,6 +40,16 @@ export const recipeApi = {
 
 export const flashcardApi = {
   generate: ({ recipeId }) => apiClient.post('/flashcards', { recipeId }).then(responseBody),
-  byRecipe: (recipeId) => apiClient.get(`/flashcards/${recipeId}`).then(responseBody),
+  byRecipe: (recipeId) =>
+    apiClient
+      .get(`/flashcards/${recipeId}`)
+      .then(responseBody)
+      .catch((error) => {
+        // Return null if flashcards don't exist yet (404), otherwise throw
+        if (error.response?.status === 404) {
+          return null;
+        }
+        throw error;
+      }),
 };
 

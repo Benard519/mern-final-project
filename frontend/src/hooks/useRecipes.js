@@ -21,6 +21,10 @@ export const useRecipes = (filters) => {
     queryKey: recipeKeys.lists(params),
     queryFn: () => recipeApi.list(params),
     keepPreviousData: true,
+    retry: 1,
+    onError: (error) => {
+      console.error('Error fetching recipes:', error);
+    },
   });
 };
 

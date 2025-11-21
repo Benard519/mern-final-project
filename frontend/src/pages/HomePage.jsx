@@ -33,7 +33,7 @@ const HomePage = () => {
     };
   }, [searchParams]);
 
-  const { data, isLoading } = useRecipes({ ...filters, limit: 12 });
+  const { data, isLoading, error } = useRecipes({ ...filters, limit: 12 });
   const toggleLike = useToggleLike();
 
   const onChange = (next) => {
@@ -59,7 +59,7 @@ const HomePage = () => {
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           Browse community recipes, tailor the filters to your pantry, and turn any dish into a set
-          of memory-friendly flashcards powered by OpenAI.
+          of memory-friendly flashcards powered by Google Gemini.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -81,6 +81,20 @@ const HomePage = () => {
 
       {isLoading ? (
         <LoadingSpinner label="Fetching recipes..." />
+      ) : error ? (
+        <EmptyState
+          title="Error loading recipes"
+          description={error.message || 'Failed to fetch recipes. Please try again.'}
+          action={
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Retry
+            </button>
+          }
+        />
       ) : results.length ? (
         <>
           <RecipeGrid
