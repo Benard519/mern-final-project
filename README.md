@@ -1,6 +1,6 @@
 # Recipe Flashcards Platform
 
-AI-assisted MERN stack platform where cooks can publish recipes, search/filter the catalog, and instantly transform any recipe into spaced-repetition flashcards powered by OpenAI.
+AI-assisted MERN stack platform where cooks can publish recipes, search/filter the catalog, and instantly transform any recipe into spaced-repetition flashcards powered by Google Gemini.
 
 ## Features
 - JWT authentication with profile management
@@ -14,9 +14,9 @@ AI-assisted MERN stack platform where cooks can publish recipes, search/filter t
 ## Architecture
 | Layer | Tech | Notes |
 | --- | --- | --- |
-| Backend | Node.js, Express 5, MongoDB (Mongoose) | REST APIs, OpenAI integration, auth middleware |
+| Backend | Node.js, Express 5, MongoDB (Mongoose) | REST APIs, Gemini integration, auth middleware |
 | Frontend | React + Vite, TailwindCSS, React Query | SPA with marketing + app shell |
-| AI | OpenAI `gpt-4o-mini` | Structured prompt creates 4–6 flashcards per recipe |
+| AI | Google Gemini `gemini-1.5-flash` | Structured prompt creates 4–6 flashcards per recipe |
 | Testing | Jest/Supertest, Vitest/RTL, Playwright | Unit, integration, E2E |
 | Deployment | Render (API), Vercel (web) | `.env.example` guides secrets |
 
@@ -27,7 +27,7 @@ See `docs/architecture.md` for deeper diagrams.
 ### Prereqs
 - Node.js 18+
 - MongoDB (local or Atlas)
-- OpenAI API key
+- Google Gemini API key (free at https://aistudio.google.com/apikey)
 
 ### Backend
 ```bash
@@ -61,7 +61,7 @@ cd frontend && npm run test:e2e
 
 ## Deployment
 Detailed instructions plus CI/CD notes live in `docs/deployment.md`. High level:
-1. Provision MongoDB Atlas + OpenAI key.
+1. Provision MongoDB Atlas + Gemini API key.
 2. Deploy backend to Render (Docker or Node buildpack) with env vars.
 3. Deploy frontend to Vercel, setting `VITE_API_URL` to the Render URL.
 4. Update the table below after successful deploys.
